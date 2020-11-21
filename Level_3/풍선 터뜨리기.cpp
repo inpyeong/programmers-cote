@@ -1,26 +1,18 @@
-#include <iostream>
 #include <string>
-#include <cstring>
 #include <vector>
 
 using namespace std;
 
 int solution(vector<int> a) {
-    int aSize = a.size();
-    int leftCache[aSize], rightCache[aSize];
-    leftCache[0] = a[0];
-    for(int i = 1; i < aSize; ++i) {
-        if(leftCache[i-1] > a[i]) leftCache[i] = a[i];
-        else leftCache[i] = leftCache[i-1];
-    }
-    rightCache[aSize-1] = a[aSize-1];
-    for(int i = aSize-2; i >= 0; --i) {
-        if(rightCache[i+1] > a[i]) rightCache[i] = a[i];
-        else rightCache[i] = rightCache[i+1];
-    }
-    int answer = 0;
-    for(int i = 0; i < aSize; ++i)
-        if(a[i] <= leftCache[i] || a[i] <= rightCache[i])
+    int aLength = a.size(), answer = 0;
+    int lCache[aLength], rCache[aLength];
+    lCache[0] = a[0], rCache[aLength-1] = a[aLength-1];
+    for(int i = 1; i < aLength; ++i)
+        lCache[i] = lCache[i-1] > a[i] ? a[i] : lCache[i-1];
+    for(int i = aLength-2; i >= 0; --i)
+        rCache[i] = rCache[i+1] > a[i] ? a[i] : rCache[i+1];
+    for(int i = 0; i < aLength; ++i)
+        if(a[i] <= lCache[i] || a[i] <= rCache[i])
             answer++;
     return answer;
 }
