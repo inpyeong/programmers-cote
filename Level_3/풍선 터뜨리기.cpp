@@ -1,4 +1,3 @@
-#include <string>
 #include <vector>
 
 using namespace std;
@@ -12,7 +11,6 @@ int solution(vector<int> a) {
     for(int i = aLength-2; i >= 0; --i)
         rCache[i] = rCache[i+1] > a[i] ? a[i] : rCache[i+1];
     for(int i = 0; i < aLength; ++i)
-        if(a[i] <= lCache[i] || a[i] <= rCache[i])
-            answer++;
+        if(a[i] <= lCache[i] || a[i] <= rCache[i]) answer++;
     return answer;
 }
