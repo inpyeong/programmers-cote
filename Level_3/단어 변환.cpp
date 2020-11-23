@@ -1,3 +1,4 @@
+// bfs
 #include <iostream>
 #include <string>
 #include <vector>
@@ -41,4 +42,42 @@ int solution(string begin, string target, vector<string> words) {
         }
     }
     return 0;
+}
+
+// dfs
+#include <string>
+#include <vector>
+
+using namespace std;
+
+int answer = 100;
+
+bool isAdjcent(string a, string b) {
+    int cnt = 0;
+    for(int i = 0; i < a.size(); ++i) {
+        if(a.at(i) != b.at(i)) cnt++;
+        if(cnt == 2) return false;
+    }
+    return true;
+}
+
+void dfs(string begin, string target, const vector<string>& words, vector<bool>& used, int cnt) {
+    for(int i = 0; i < words.size(); ++i) {
+        if(isAdjcent(begin, words[i]) && !used[i]) {
+            if(words[i] == target) {
+                answer = min(answer, cnt+1);
+                return;
+            }
+            used[i] = true;
+            dfs(words[i], target, words, used, cnt+1);
+            used[i] = false;
+        }
+    }
+}
+
+int solution(string begin, string target, vector<string> words) {
+    vector<bool> used(words.size(), false);
+    dfs(begin, target, words, used, 0);
+    if(answer == 100) return 0;
+    return answer;
 }
