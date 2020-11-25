@@ -1,33 +1,34 @@
 #include <iostream>
 #include <string>
+#include <algorithm>
 
 using namespace std;
 
-const int INF = 987654321;
-
 int solution(string s) {
-    int maxLenOdd = -INF, maxLenEven = -INF;
-    for(int i = 0; i < s.size(); ++i) {
-        int lenOdd = 0, leftIdxOdd = i - 1, rightIdxOdd = i + 1;
-        while(leftIdxOdd >= 0 && rightIdxOdd < s.size()) {
-            if(s.at(leftIdxOdd--) == s.at(rightIdxOdd++)) 
-                lenOdd++;
+    int answer = 1;
+    for(int center = 0; center < s.size()-1; ++center) {
+        int oLength = 1, delta = 1;
+        while(center - delta >= 0 && center + delta < s.size()) {
+            if(s.at(center-delta) == s.at(center+delta)) {
+                oLength += 2;
+                delta++;
+            }
             else break;
         }
-        if(lenOdd) maxLenOdd = max(maxLenOdd, lenOdd);
-        
-        if(i < s.size()-1 && (s.at(i) == s.at(i+1))) {
-            int lenEven = 1, leftIdxEven = i - 1, rightIdxEven = i + 2;
-            while(leftIdxEven >= 0 && rightIdxEven < s.size()) {
-                if(s.at(leftIdxEven--) == s.at(rightIdxEven++)) 
-                    lenEven++;
+        int eLength = 0;
+        delta = 1;
+        if(s.at(center) == s.at(center+1)) {
+            eLength = 2;
+            while(center - delta >= 0 && center + delta + 1 < s.size()) {
+                if(s.at(center-delta) == s.at(center+delta+1)) {
+                    eLength += 2;
+                    delta++;
+                }
                 else break;
             }
-            if(lenEven > 1) maxLenEven = max(maxLenEven, lenEven);
         }
+        int bigger = max(oLength, eLength);
+        answer = max(answer, bigger);
     }
-    if(maxLenOdd == -INF && maxLenEven == -INF) return 1;
-    maxLenOdd = maxLenOdd * 2 + 1;
-    maxLenEven = maxLenEven * 2;
-    return max(maxLenOdd, maxLenEven);
+    return answer;
 }
