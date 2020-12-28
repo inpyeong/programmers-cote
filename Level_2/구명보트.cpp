@@ -20,9 +20,7 @@ int solution(vector<int> people, int limit) {
     sort(people.begin(), people.end(), greater<int>());
     int n = people.size();
     for(int i = 0, j = n-1; i <= j; ++i) {
-        if(people[i] + people[j] <= limit) {
-            j--;
-        }
+        if(people[i] + people[j] <= limit) j--;
         answer++;
     }
     return answer;
