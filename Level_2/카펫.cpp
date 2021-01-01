@@ -1,6 +1,5 @@
 #include <string>
 #include <vector>
-#include <algorithm>
 
 using namespace std;
 
@@ -15,7 +14,7 @@ void bruteForce(int yw) {
     int yh = Yellow / yw;
     int cmp = (yw + yh) * 2 + 4;
     if(cmp == Brown) {
-        answer = vector<int> { yw+2, yh+2 };
+        answer = vector<int> { yh+2, yw+2 };
         return;
     }
     bruteForce(yw+1);
@@ -25,7 +24,5 @@ vector<int> solution(int brown, int yellow) {
     Brown = brown; 
     Yellow = yellow;
     bruteForce(1);
-    if(answer[0] < answer[1]) 
-        swap(answer[0], answer[1]);
     return answer;
 }
