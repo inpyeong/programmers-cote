@@ -6,6 +6,7 @@
 using namespace std;
 
 string solution(int n, int t, int m, vector<string> timetable) {
+    // "시간:분"을 "분"으로만 단순화한다.
     vector<int> timetableToInt;
     for(string time : timetable) {
         int hour = stoi(time.substr(0, 2)) - 9;
@@ -32,9 +33,13 @@ string solution(int n, int t, int m, vector<string> timetable) {
         if(i < n-1) time += t;
     }
     string answer = "";
+    // 만약 셔틀버스에 더 탑승할 수 있었다면 셔틀버스가 도착한 시간에 탑승해도 된다.
+    // 그러나 셔틀버스에 더 이상 탑승할 수 없다면 제일 마지막에 탄 크루보다 1분 빠르게 도착해야 한다.
     int totalMinute = mCnt < m ? time : timetableToInt[idx-1]-1;
+    // 09:00부터 셔틀버스가 운영하기 때문에 540분 더하기.
     totalMinute += 540;
     
+    // 스트링 처리
     string ansH = to_string(totalMinute / 60);
     if(ansH.size() == 1) ansH = "0" + ansH;
     string ansM = to_string(totalMinute % 60);
