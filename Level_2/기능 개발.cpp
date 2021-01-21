@@ -5,33 +5,31 @@
 using namespace std;
 
 vector<int> solution(vector<int> progresses, vector<int> speeds) {
-    int numOfFunc = progresses.size();
-    queue<pair<int, int> > q;
-    for(int i = 0; i < numOfFunc; ++i) {
-        pair<int, int> p = make_pair(progresses[i], speeds[i]);
-        q.push(p);
-    }
-    
-    int days = 0, totalFinish = 0;
     vector<int> answer;
+    queue<int> days;
+    int sz = progresses.size();
+    for(int i = 0; i < sz; ++i) {
+        int left = 100 - progresses[i];
+        int day = left / speeds[i];
+        if(left % speeds[i]) day++;
+        days.push(day);
+    }
+    int ans = 1;
+    int s = days.front();
+    days.pop();
     while(true) {
-        bool check = false;
-        int finish = 0;
-        days++;
-        int sizeOfQueue = q.size();
-        for(int i = 0; i < sizeOfQueue; ++i) {
-            if(q.front().first + days * q.front().second >= 100) {
-                check = true;
-                q.pop();
-                finish++;
-            } 
-            else break;
+        int tmp = days.front();
+        days.pop();
+        if(s >= tmp) ans++;
+        else {
+            answer.push_back(ans);
+            ans = 1;
+            s = tmp;
         }
-        if(check) {
-            answer.push_back(finish);
-            totalFinish += finish;
+        if(days.empty()) {
+            answer.push_back(ans);
+            break;
         }
-        if(totalFinish == numOfFunc) break;
     }
     return answer;
 }
