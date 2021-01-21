@@ -1,37 +1,26 @@
 #include <string>
 #include <vector>
 #include <queue>
-#include <iostream>
 
 using namespace std;
 
 int solution(int bridge_length, int weight, vector<int> truck_weights) {
-    int curTime = 0, curWeight = 0, curTruckIdx = 0;
-    int numOfTrucks = truck_weights.size();
-    vector<pair<bool, int> > truck(numOfTrucks, make_pair(false, 0));
-    queue<int> bridge;
-    
+    int answer = 0, curWeight = 0, truckOut = 0;
+    // weight, time
+    queue<pair<int, int> > bridge;
     while(true) {
-        if(curTruckIdx < numOfTrucks && curWeight + truck_weights[curTruckIdx] <= weight) {
-            curWeight += truck_weights[curTruckIdx];
-            bridge.push(curTruckIdx);
-            truck[curTruckIdx].first = true;
-            curTruckIdx++;
+        if(answer - bridge.front().second == bridge_length) {
+            curWeight -= bridge.front().first;
+            bridge.pop();
+            truckOut++;
         }
-        curTime++;
-        for(int i = 0; i < curTruckIdx; ++i) {
-            if(truck[i].first) {
-                truck[i].second++;
-                if(truck[i].second == bridge_length) {
-                    truck[i].first = false;
-                    bridge.pop();
-                    curWeight -= truck_weights[i];
-                    continue;
-                }
-            }
+        if(truck_weights.size() > 0 && truck_weights.front() + curWeight <= weight) {
+            curWeight += truck_weights.front();
+            bridge.push(make_pair(truck_weights.front(), answer));
+            truck_weights.erase(truck_weights.begin());
         }
-        if(bridge.empty() && curTruckIdx == numOfTrucks)
-            break;
+        answer++;
+        if(bridge.empty()) break;
     }
-    return ++curTime;
+    return answer;
 }
