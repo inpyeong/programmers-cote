@@ -30,6 +30,7 @@ int solution(string name) {
                 answer += cntR;
             }
         }
+        // 알파벳을 바꿀 때 최소 횟수 계산
         else {
             int cntU = 'A' - name[pos];
             int cntD = 'Z' - name[pos] + 1;
