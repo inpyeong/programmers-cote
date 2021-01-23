@@ -9,7 +9,7 @@ int solution(string name) {
     while(true) {
         // 모두 바꿨다면 루프 종료
         if(name == string(name.length(), 'A')) break;
-        // 'A'라면 바꿔야 할 알파벳의 위치탐색
+        // 현재 위치의 알파벳이 'A'라면 다음으로 바꿔야 할 알파벳의 위치탐색
         if(name[pos] == 'A') {
             int posL = pos, posR = pos;
             int cntL = 0, cntR = 0;
@@ -21,6 +21,7 @@ int solution(string name) {
                 posR = (posR + 1) == name.length() ? 0 : posR + 1;
                 cntR++;
             }
+            // cntL >= cntR면 마지막 테스트케이스만 틀림. 이유 모름.
             if(cntL < cntR) {
                 pos = posL;
                 answer += cntL;
