@@ -1,20 +1,14 @@
 #include <string>
-#include <iostream>
-#include <stack>
 
 using namespace std;
 
 bool solution(string s)
 {
-	  stack<char> S;
-    for(char c : s) {
-        if(c == '(' || S.empty())
-            S.push(c);
-        else {
-            if(S.top() == '(') S.pop();
-            else S.push(c);
-        }
+    int tmp = 0;    
+    for(int i = 0; i < s.length(); ++i) {
+        if(s[i] == '(') tmp++;
+        else tmp--;
+        if(tmp < 0) return false;
     }
-	  bool answer = S.size() ? false : true;
-    return answer;
+    return tmp == 0;
 }
