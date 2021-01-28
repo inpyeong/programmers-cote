@@ -1,30 +1,24 @@
-#include <iostream>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
-string getBin(int one) {
-    string ret = "";
-    while(one > 0) {
-        if(one % 2) ret += '1';
-        else ret += '0';
-        one/=2;
-    }
-    return ret;
-}
-
 vector<int> solution(string s) {
-    int cnt = 0, del = 0;
-    while(s.size() > 1) {
-        cnt++;
-        int one = 0;
-        for(char c : s)
-            if(c == '1') one++;
-        int zero = s.size() - one;
-        del += zero;
-        s = getBin(one);
+    vector<int> answer = { 0, 0 };
+    while(s != "1") {
+        int cnt = 0;
+        for(char c : s) {
+            if(c == '1') cnt++;
+            else answer[1]++;
+        }
+        s = "";
+        while(cnt) {
+            s += to_string(cnt % 2);
+            cnt /= 2;
+        }
+        reverse(s.begin(), s.end());
+        answer[0]++;
     }
-    vector<int> answer = {cnt, del};
     return answer;
 }
