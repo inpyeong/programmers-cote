@@ -1,53 +1,51 @@
-#include <iostream>
 #include <string>
 #include <vector>
 #include <algorithm>
 
 using namespace std;
 
-long long cal(long long a, long long b, char op) {
-    switch(op) {
+void calc(vector<long long>& numbers, vector<char>& operands, int idx) {
+    long long a = numbers[idx], b = numbers[idx+1];
+    numbers.erase(numbers.begin() + idx + 1);
+    switch(operands[idx]) {
         case '*':
-            return a * b;
+            numbers[idx] = a * b;
+            break;
         case '+':
-            return a + b;
+            numbers[idx] = a + b;
+            break;
         case '-':
-            return a - b;
-    }
+            numbers[idx] = a - b;
+            break;
+    } 
+    operands.erase(operands.begin() + idx);
 }
 
 long long solution(string expression) {
     long long answer = 0;
-    vector<char> opers;
-    vector<long long> nums;
-    string num = "";
-    for(char c : expression) {
-        if(c == '-' || c == '+' || c == '*') {
-            nums.push_back(stoll(num));
-            num.clear();
-            opers.push_back(c);
+    vector<long long> numbers;
+    vector<char> operands;
+    string tmp;
+    for(int i = 0; i < expression.length(); ++i) {
+        if(expression[i] >= '0' && expression[i] <= '9')
+            tmp += expression[i];
+        else {
+            numbers.push_back(stoll(tmp));
+            operands.push_back(expression[i]);
+            tmp.clear();
         }
-        else num += c;
+        if(i == expression.length()-1)
+            numbers.push_back(stoll(tmp));
     }
-    nums.push_back(stoll(num));
-    string oper = "*+-";
+    string op = "*+-";
     do {
-        vector<char> tmpOpers = opers;
-        vector<long long> tmpNums = nums;
-        for(char op : oper) {
-            for(int i = 0; i < tmpOpers.size(); ++i) {
-                long long ret = 0;
-                if(tmpOpers[i] == op) {
-                    ret += cal(tmpNums[i], tmpNums[i+1], tmpOpers[i]);
-                    tmpNums[i] = ret;
-                    tmpOpers.erase(tmpOpers.begin() + i);
-                    tmpNums.erase(tmpNums.begin() + i + 1);
-                    i--;
-                }
-            }
-        }
-        answer = max(answer, abs(tmpNums[0]));
-    } while(next_permutation(oper.begin(), oper.end()));
-    
+        vector<long long> numbersCopy(numbers.begin(), numbers.end());
+        vector<char> operandsCopy(operands.begin(), operands.end());
+        for(int i = 0; i < op.length(); ++i)
+            for(int j = 0; j < operandsCopy.size(); ++j)
+                if(operandsCopy[j] == op[i])
+                    calc(numbersCopy, operandsCopy, j--);
+        answer = max(answer, abs(numbersCopy.front()));
+    } while(next_permutation(op.begin(), op.end()));
     return answer;
 }
