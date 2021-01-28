@@ -6,7 +6,6 @@ using namespace std;
 
 void calc(vector<long long>& numbers, vector<char>& operands, int idx) {
     long long a = numbers[idx], b = numbers[idx+1];
-    numbers.erase(numbers.begin() + idx + 1);
     switch(operands[idx]) {
         case '*':
             numbers[idx] = a * b;
@@ -18,6 +17,7 @@ void calc(vector<long long>& numbers, vector<char>& operands, int idx) {
             numbers[idx] = a - b;
             break;
     } 
+    numbers.erase(numbers.begin() + idx + 1);
     operands.erase(operands.begin() + idx);
 }
 
