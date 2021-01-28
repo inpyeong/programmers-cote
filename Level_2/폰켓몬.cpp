@@ -4,8 +4,8 @@
 using namespace std;
 
 int solution(vector<int> nums) {
-    int answer = 0;
-    set<int> s(nums.begin(), nums.end());
-    answer = min(s.size(), nums.size()/2);
-    return answer;
+    set<int> s;
+    for(int n : nums)
+        s.insert(n);
+    return s.size() >= nums.size() / 2 ? nums.size() / 2 : s.size();
 }
