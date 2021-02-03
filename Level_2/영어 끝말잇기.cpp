@@ -1,42 +1,26 @@
 #include <string>
 #include <vector>
-#include <iostream>
 #include <map>
 
 using namespace std;
 
 vector<int> solution(int n, vector<string> words) {
-    vector<int> answer;
-    map<string, bool> wordsList;
-    map<string, bool>::iterator iter;
-    string beforeWord = "";
-    
-    vector<int> person(n+1, 0);
-    int personIdx = 0;
-    bool flag = false;
-    for(string word : words) {
-        personIdx++;
-        if(personIdx > n) personIdx = 1;
-        person[personIdx]++;
-        
-        iter = wordsList.find(word);
-        // 사용된 적이 없는 단어라면,
-        if(iter == wordsList.end()) {
-            // 끝말잇기 규칙에 위배되는 단어를 말한 경우,
-            if(beforeWord.size() > 0 && beforeWord[beforeWord.size()-1] != word[0]) {
-                flag = true;
-                break;
-            }
-            // 정상적으로 말한 경우,
-            wordsList[word] = true;
-            beforeWord = word;
+    map<string, bool> list;
+    for(int turn = 0; turn < words.size(); ++turn) {
+        bool ok = true;
+        // 첫 순서는 통과
+        if(turn == 0) {
+            list[words[turn]] = true;
+            continue;
         }
-        else {
-            flag = true;
-            break;
-        }
+        // 이전에 사용한 단어라면
+        if(list.find(words[turn]) != list.end())
+            ok = false;
+        // 앞사람이 말한 단어의 마지막 문자로 시작하는 단어를 말하지 않은 경우
+        if(words[turn-1][words[turn-1].size()-1] != words[turn][0])
+            ok = false;
+        if(!ok) return { turn % n + 1, turn / n + 1};
+        list[words[turn]] = true;
     }
-    if(flag) answer = { personIdx, person[personIdx] };
-    else answer = { 0, 0 };
-    return answer;
+    return { 0, 0 };
 }
