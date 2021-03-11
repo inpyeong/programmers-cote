@@ -2,85 +2,80 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <queue>
 
 using namespace std;
 
-// 오른, 오른 아래 대각, 아래
-int dx[] = { 1, 1, 0 };
+set<pair<int, int> >::iterator it;
 int dy[] = { 0, 1, 1 };
+int dx[] = { 1, 0, 1 };
 
-void printBoard(const vector<string>& board) {
-    for(int i = 0; i < board.size(); ++i) {
-        for(int j = 0; j < board[0].size(); ++j)
-            cout << board[i][j] << " ";
+bool checkBomb(const vector<string>& board, int m, int n, int y, int x) {
+    for(int i = 0; i < 3; ++i) {
+        int ny = y + dy[i];
+        int nx = x + dx[i];
+        if(ny < 0 || ny >= m || nx < 0 || nx >= n)
+            return false;
+       	if(board[y][x] != board[ny][nx])
+            return false;
+    }
+    return true;
+}
+
+void bomb(vector<string>& board, const set<pair<int, int> >& bombList) {
+    for(it = bombList.begin(); it != bombList.end(); ++it) {
+        int y = it->first;
+        int x = it->second;
+        board[y][x] = '0';
+    }
+}
+
+void move(vector<string>& board, int m, int n) {
+    for(int j = 0; j < n; ++j) {
+        for(int i = m-1; i >= 0; --i) {
+            if(board[i][j] == '0') continue;
+            int pos = i + 1;
+            while(pos < m && board[pos][j] == '0') pos++;
+            pos--;
+            // 블록 밑에 빈 공간이 없다면 통과
+            if(pos == i) continue;
+            board[pos][j] = board[i][j];
+            board[i][j] = '0';
+        }
+    }
+}
+
+void printBoard(const vector<string>& board, int m, int n) {
+    for(int i = 0; i < m; ++i) {
+        for(int j = 0; j < n; ++j)
+            cout << board[i][j];
         cout << endl;
     }
-    for(int i = 0; i < board[0].size(); ++i)
-        cout << '-' << " ";
-    cout << endl;
 }
 
 int solution(int m, int n, vector<string> board) {
     int answer = 0;
-    set<pair<int, int> > coords;
     while(true) {
-        for(int y = 0; y < m-1; ++y) {
-            for(int x = 0; x < n-1; ++x) {
-                if(board[y][x] == '0') continue;
-                int cnt = 0;
-                for(int k = 0; k < 3; ++k) {
-                    int ny = y + dy[k];
-                    int nx = x + dx[k];
-                    if(board[ny][nx] == board[y][x]) cnt++;
-                }
-                // 4칸이 같으면 coords에 삽입
-                if(cnt == 3) {
-                    for(int k = 0; k < 3; ++k) {
-                        int ny = y + dy[k];
-                        int nx = x + dx[k];
-                        coords.insert({ ny, nx });
-                    }
-                    coords.insert({ y, x });
+        int bombCnt = 0;
+        // 제거해야 할 블록좌표 리스트
+        set<pair<int, int> > bombList;
+        for(int i = 0; i < m; ++i) {
+            for(int j = 0; j < n; ++j) {
+                // 빈 공간은 통과
+                if(board[i][j] == '0') continue;
+                // 2 x 2 조건을 만족하는지 확인
+				if(checkBomb(board, m, n, i, j)) {
+                    bombList.insert(make_pair(i, j));
+                    for(int d = 0; d < 3; ++d)
+                        bombList.insert(make_pair(i + dy[d], j + dx[d]));
                 }
             }
         }
-        answer += coords.size();
-        // 사라질 블록이 없으면 종료
-        if(coords.size() == 0) break;
-        // 지워야 하는 블록 지우기
-        for(auto iter = coords.begin(); iter != coords.end(); ++iter) {
-            int y = iter->first;
-            int x = iter->second;
-            board[y][x] = '0';
-        }
-        coords.clear();
-        // 빈 공간에 블록 채워넣기
-        // 먼저 열을 고정
-        for(int x = 0; x < n; ++x) {
-            // empty: 열에서 빈 칸의 개수
-            // lastEmptyCoord: 아래서부터 마지막으로 빈칸을 발견한 y좌표
-            // flag: 아래서부터 빈칸을 확인해갈 때 빈칸 발견하면 true
-            while(true) {
-                int empty = 0, lastEmptyCoord = -1;
-                bool flag = false;
-                for(int y = m-1; y >= 0; --y) {
-                    // 빈칸을 처음 만나면 flag는 true
-                    if(!flag && board[y][x] == '0') flag = true;
-                    if(flag && board[y][x] == '0') empty++;
-                    if(flag && board[y][x] != '0') {
-                        lastEmptyCoord = y + 1;
-                        break;
-                    }
-                }
-                // 옮길 블록이 없으면 다음 열 검사
-                if(lastEmptyCoord == -1) break;
-                // 빈 칸의 개수만큼 블록을 아래로 이동시킨다.
-                for(int y = lastEmptyCoord-1; y >= 0; --y) {
-                    board[y+empty][x] = board[y][x];
-                    board[y][x] = '0';
-                }
-            }
-        } 
+        if(bombList.size() == 0) break;
+        answer += bombList.size();
+        bomb(board, bombList);
+        move(board, m, n); 
     }
+    printBoard(board, m, n);
     return answer;
 }
