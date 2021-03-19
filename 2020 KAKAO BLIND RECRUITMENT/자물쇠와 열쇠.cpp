@@ -29,7 +29,7 @@ bool canOpen(const vector<vector<int> >& board, const vector<vector<int> >& key,
         for(int j = 0; j < m+n-1; ++j) {
             bool ok1 = true;
             boardCopy = board;
-            for(int k = i; k < i+m && ok1; ++k) {
+            for(int k = i; k < i+m && ok1; ++k)
                 for(int l = j; l < j+m; ++l) {
                     if(k >= m-1 && k < n+m-1 && l >= m-1 && l < n+m-1) {
                         if(boardCopy[k][l] && key[k-i][l-j]) {
@@ -40,16 +40,14 @@ bool canOpen(const vector<vector<int> >& board, const vector<vector<int> >& key,
                             boardCopy[k][l] = 1;
                     }
                 }
-            }
             if(!ok1) continue;
             bool ok2 = true;
             for(int k = m-1; k < n+m-1 && ok2; ++k)
-                for(int l = m-1; l < n+m-1; ++l) {
+                for(int l = m-1; l < n+m-1; ++l)
                     if(!boardCopy[k][l]) {
                         ok2 = false;
                         break;
                     }
-                }
             if(ok2) return true;
         }
     }
