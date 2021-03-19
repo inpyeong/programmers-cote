@@ -69,7 +69,7 @@ int solution(vector<vector<int>> board) {
             q.push(Robot(nx, ny, dir, time+1));
         }
         
-        // x, y를 축으로 90도 회전
+        // xx, yy를 축으로 90도 회전
         for(int i = 1; i < 4; i+=2) {
             int ndir = (dir + i) % 4;
             nxx = x + dx[ndir];
@@ -96,7 +96,7 @@ int solution(vector<vector<int>> board) {
             q.push(Robot(x, y, ndir, time+1));
         }
         
-        // xx, yy를 축으로 90도 회전
+        // x, y를 축으로 90도 회전
         dir = (dir + 2) % 4;
         for(int i = 1; i < 4; i+=2) {
             int ndir = (dir + i) % 4;
