@@ -26,7 +26,5 @@ vector<long long> solution(long long k, vector<long long> room_number) {
             room[nextNum] = find(nextNum+1);
         }
     }
-    for(auto it = room.begin(); it != room.end(); ++it)
-        cout << it->first << " " << it->second << endl;
     return answer;
 }
