@@ -20,7 +20,6 @@ int solution(vector<vector<int>> board) {
     queue<Car> q;
     Car c = Car(0, 0, 0, -1);
     q.push(c);
-    board[0][0] = 0;
     while(!q.empty()) {
         Car a = q.front();
         q.pop();
