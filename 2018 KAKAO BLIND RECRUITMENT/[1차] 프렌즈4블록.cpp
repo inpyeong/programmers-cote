@@ -56,7 +56,6 @@ void printBoard(const vector<string>& board, int m, int n) {
 int solution(int m, int n, vector<string> board) {
     int answer = 0;
     while(true) {
-        int bombCnt = 0;
         // 제거해야 할 블록좌표 리스트
         set<pair<int, int> > bombList;
         for(int i = 0; i < m; ++i) {
