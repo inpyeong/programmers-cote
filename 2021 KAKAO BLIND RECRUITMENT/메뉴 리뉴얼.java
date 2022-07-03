@@ -42,9 +42,9 @@ class Solution {
                 comb(order, 0, c, "");
             }
             
- 	    for (String k : Comb.keySet()) {
-            if (Comb.get(k) == MaxCnt && MaxCnt > 1)
-                PQ.offer(k);
+ 	        for (String k : Comb.keySet()) {
+                if (Comb.get(k) == MaxCnt && MaxCnt > 1)
+                    PQ.offer(k);
             }      
         }
         Answer = new String[PQ.size()];
