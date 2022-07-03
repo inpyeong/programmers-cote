@@ -1,48 +1,76 @@
 import java.util.*;
 
 class Solution {
-    int pos;
     
-    boolean isCorrect(String str) {
-        boolean ret = true;
-        int left = 0, right = 0;
-        Stack<Character> mystack = new Stack<Character>();
-        
-        for (int i = 0; i < str.length(); ++i) {
-            if (str.charAt(i) == '(') {
-                left++;
-                mystack.push('(');
-            } else {
-                right++;
-                if(mystack.empty())
-                    ret = false;
-                else  
-                    mystack.pop();
+    static final char LEFT = '(';
+    static final char RIGHT = ')';
+    
+    Stack<Character> Stack = new Stack<>();
+    
+    public boolean isGood(String w) {
+        for (int i = 0; i < w.length(); ++i) {
+            char c = w.charAt(i);
+            
+            if (c == LEFT) {
+                Stack.push(c);
             }
-            if (left == right) {
-                pos = i + 1;
-                return ret;
+            else if (c == RIGHT) {
+                if (Stack.isEmpty()) 
+                    return false;
+                
+                if (Stack.peek() == LEFT) {
+                    Stack.pop();
+                }
+                else {
+                    return false;
+                }
+            }
+        }    
+        return Stack.isEmpty();
+    }
+    
+    public String go(String w) {
+        if (w.length() == 0) 
+            return "";
+        
+        String u = "", v = "";
+        
+        int lCnt = 0, rCnt = 0;
+        for (int i = 0; i < w.length(); ++i) {
+            char c = w.charAt(i);
+            
+            if (c == LEFT)
+                lCnt++;
+            else if (c == RIGHT)
+                rCnt++;
+            
+            if (lCnt == rCnt) {
+                u = w.substring(0, lCnt + rCnt);
+                v = w.substring(lCnt + rCnt);
+                break;
             }
         }
-        return true;
+        
+        if (isGood(u)) {
+            return u + go(v);
+        }
+        else {
+            String tmp = "(";
+            tmp += go(v);
+            tmp += ")";
+            u = u.substring(1, u.length() - 1);
+            String tmp2 = "";
+            for (int i = 0; i < u.length(); ++i) {
+                char c = u.charAt(i);
+                if (c == LEFT) tmp2 += RIGHT;
+                else tmp2 += LEFT;
+            }
+            tmp += tmp2;
+            return tmp;
+        }    
     }
     
     public String solution(String p) {
-        if(p.isEmpty()) return p;
-        
-        boolean correct = isCorrect(p);
-        String u = p.substring(0, pos);
-        String v = p.substring(pos, p.length());
-        
-        if (correct)
-            return u + solution(v);
-        String answer = "(" + solution(v) + ")";
-        for (int i = 1; i < u.length()-1; ++i) {
-            if (u.charAt(i) == '(') 
-                answer += ")";
-            else 
-                answer += "(";
-        }
-        return answer;
+        return go(p);
     }
 }
