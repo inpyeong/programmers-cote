@@ -1,53 +1,70 @@
+import java.util.*;
+
 class Solution {
-    void match(int[][] arr, int[][] key, int rot, int r, int c) {
-        int n = key.length;
-        for (int i = 0; i < n; ++i) {
-            for (int j = 0; j < n; ++j) {
-                if (rot == 0) {
-                    arr[r + i][c + j] += key[i][j];
-                } else if (rot == 1) {
-                    arr[r + i][c + j] += key[j][n - 1 - i];
-                } else if (rot == 2) {
-                    arr[r + i][c + j] += key[n - 1 - i][n - 1 - j];
-                } else {
-                    arr[r + i][c + j] += key[n - 1 - j][i];
-                }
-            }
+    public static final int DIR = 4;
+    
+    public int M, N, K;
+    public int[][] Key, Lock, KeLock;
+    public boolean Answer;
+    
+    public void initGlobalVars(int[][] key, int[][] lock) {
+        M = key.length;
+        N = lock.length;
+        K = N + 2 * (M - 1);
+        Key = key;
+        Lock = lock;
+    }
+    
+    public void rotateKey() {  // (y, x) => (x, (M - 1) - y)
+        int[][] temp = new int[M][M];
+        for (int y = 0; y < M; ++y) 
+            for (int x = 0; x < M; ++x) 
+                temp[x][(M - 1) - y] = Key[y][x];
+        Key = temp;
+    }
+    
+    public void initKeLock(int[] keyPos) {  // Initialize KeLock
+        KeLock = new int[K][K];
+        // Lock
+        for (int i = M - 1; i < (M - 1) + N; ++i) {
+            for (int j = M - 1; j < (M - 1) + N; ++j) 
+                KeLock[i][j] = Lock[i - (M - 1)][j - (M - 1)];
+        }
+        
+        // Key
+        for (int i = keyPos[0]; i < keyPos[0] + M; ++i) {
+            for (int j = keyPos[1]; j < keyPos[1] + M; ++j) 
+                KeLock[i][j] += Key[i - keyPos[0]][j - keyPos[1]];
         }
     }
     
-    boolean check(int[][] arr, int offset, int n) {
-        for (int i = 0; i < n; ++i) {
-            for (int j = 0; j < n; ++j) {
-                if (arr[offset + i][offset + j] != 1) {
-                    return false;
-                }
+    public boolean isKeyMatched() {  // Check if Key is Matched
+        // Lock
+        boolean ret = true;
+        for (int i = M - 1; i < (M - 1) + N; ++i) {
+            for (int j = M - 1; j < (M - 1) + N; ++j) {
+                int KeLockVal = KeLock[i][j];
+                if (KeLockVal != 1) ret = false;
             }
         }
-         
-        return true;
+        return ret;
+    }
+    
+    public boolean go() {
+        for (int i = 0; i < DIR; ++i) {
+            rotateKey();
+            for (int j = 0; j < (M - 1) + N; ++j) {
+                for (int k = 0; k < (M - 1) + N; ++k) {
+                    initKeLock(new int[]{j, k});
+                    if (isKeyMatched()) return true;
+                }
+            }
+		}
+        return false;
     }
     
     public boolean solution(int[][] key, int[][] lock) {
-        int offset = key.length - 1;
-        
-        for (int r = 0; r < offset + lock.length; ++r) {
-            for (int c = 0; c < offset + lock.length; ++c) {
-                for (int rot = 0; rot < 4; ++rot) {
-                    int[][] arr = new int[58][58];
-                    for (int i = 0; i < lock.length; ++i) {
-                        for (int j = 0; j < lock.length; ++j) {
-                            arr[offset + i][offset + j] = lock[i][j];
-                        }
-                    }
-                    match(arr, key, rot, r, c);
-                    if (check(arr, offset, lock.length)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        
-        return false;
+        initGlobalVars(key, lock);
+        return go();
     }
 }
